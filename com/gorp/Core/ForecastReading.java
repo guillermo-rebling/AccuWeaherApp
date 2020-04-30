@@ -1,13 +1,13 @@
 package com.gorp.Core;
 
-public class WeatherReading {
+public class ForecastReading {
 	
 
 	public Headline Headline;
 	public DailyForecasts[] DailyForecasts;
 
 
-	public WeatherReading(Headline Headline, DailyForecasts[] dailyForecasts) {
+	public ForecastReading(Headline Headline, DailyForecasts[] dailyForecasts) {
 		this.Headline = Headline;
 		this.DailyForecasts = dailyForecasts;
 	}
@@ -36,7 +36,7 @@ public class WeatherReading {
 
 	@Override
 	public String toString() {
-		return "WeatherReading [Headline=" + Headline + ", dailyForecasts=" + DailyForecasts
+		return "ForecastReading [Headline=" + Headline + ", dailyForecasts=" + DailyForecasts
 				+ ", getHeadline()=" + getHeadline() + ", getDailyForecasts()=" + getDailyForecasts()
 				+ ", getClass()=" + getClass() + ", hashCode()=" + hashCode() + ", toString()=" + super.toString()
 				+ "]";
