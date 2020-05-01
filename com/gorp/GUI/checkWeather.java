@@ -8,6 +8,10 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,6 +19,7 @@ import java.net.URL;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -40,6 +45,8 @@ public class checkWeather {
 	private JTable tableCurrent;
 	private JTable tableForecast;
 	private String notAvailable = "...";
+	private JFileChooser fileChooser;
+	private String apiKey;
 
 	/**
 	 * Launch the application.
@@ -70,7 +77,7 @@ public class checkWeather {
 	private void initialize() {
 		frame = new JFrame("Weather Nation... by AccuWeather");
 		frame.setBounds(100, 100, 1000, 600);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setIconImage(new ImageIcon("/home/rebjac2/eclipse/java-2019-09/eclipse/weatherApp/AccuWeatherApp/src/weather.jpg").getImage());
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -98,10 +105,54 @@ public class checkWeather {
 			@Override
 			public void actionPerformed(ActionEvent aboutEvent) {
 				if (aboutEvent.getSource() == mntmAbout)
-					JOptionPane.showMessageDialog(frame, "Version 0.2\nAuthor: Guillermo Rebling", "About",
+					JOptionPane.showMessageDialog(frame, "Version 0.3\nAuthor: Guillermo Rebling", "About",
 							JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
+		
+		mntmClose.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent closeEvent) {
+				if (closeEvent.getSource() == mntmClose)
+				frame.dispose();
+			}
+		});
+		
+		mntmEnterApiKey.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent enterAPIEvent) {
+				if (enterAPIEvent.getSource() == mntmEnterApiKey) {
+					fileChooser = new JFileChooser();
+					fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+					int returnValue = fileChooser.showOpenDialog(frame);
+					if (returnValue == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = fileChooser.getSelectedFile();
+						BufferedReader reader;
+				        StringBuilder sb = new StringBuilder();
+				        try {
+				            reader = new BufferedReader(new FileReader(selectedFile));
+				            String line = reader.readLine();
+				            while(line != null) {
+				                sb.append(line);
+				                sb.append(System.lineSeparator());
+				                line = reader.readLine();
+				            }
+				            apiKey = sb.toString();
+				        } 
+				        catch (FileNotFoundException e1) {
+				            e1.printStackTrace();
+				        }
+				        catch (IOException e1) {
+				            e1.printStackTrace();
+				        }
+						//System.out.println(selectedFile.getAbsolutePath());
+					}
+				}
+			}
+		});
+		
 		
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0, 0, 0, 0, 0};
@@ -241,8 +292,8 @@ public class checkWeather {
 				}else if(buttonQuebecCity.isSelected()) {
 					locationCode = "50011";
 				}
-				String fiveDaysForecast = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + locationCode + "?apikey=mux6GsZNqWzNimEZnMag6K6x9xt5YdJT";
-				String currentConditions = "http://dataservice.accuweather.com/currentconditions/v1/" + locationCode + "?apikey=mux6GsZNqWzNimEZnMag6K6x9xt5YdJT";
+				String fiveDaysForecast = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/" + locationCode + "?apikey=" + apiKey;
+				String currentConditions = "http://dataservice.accuweather.com/currentconditions/v1/" + locationCode + "?apikey=" + apiKey;
 				
 				String USER_AGENT ="Mozilla/5.0";
 				URL obj;
