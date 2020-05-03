@@ -75,10 +75,31 @@ public class checkWeather {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		try {
+			File initializeAPIkey = new File("src/com/gorp/Core/Utils/accuWeather.key");
+			if(initializeAPIkey.exists()) {
+				StringBuffer sBufferAPI = new StringBuffer();
+				BufferedReader readAPIkey = new BufferedReader(new FileReader(initializeAPIkey));
+	            String bufferLine = readAPIkey.readLine();
+	            while(bufferLine != null) {
+	            	sBufferAPI.append(bufferLine);
+	            	sBufferAPI.append(System.lineSeparator());
+	            	bufferLine = readAPIkey.readLine();
+	            }
+	            apiKey = sBufferAPI.toString();
+	            readAPIkey.close();
+			}else {
+				System.out.println("Could not initialize API key!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		frame = new JFrame("Weather Nation... by AccuWeather");
 		frame.setBounds(100, 100, 1000, 600);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.setIconImage(new ImageIcon("/home/rebjac2/eclipse/java-2019-09/eclipse/weatherApp/AccuWeatherApp/src/weather.jpg").getImage());
+		frame.setIconImage(new ImageIcon("src/com/gorp/Core/Utils/weather.jpg").getImage());
 		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -105,7 +126,7 @@ public class checkWeather {
 			@Override
 			public void actionPerformed(ActionEvent aboutEvent) {
 				if (aboutEvent.getSource() == mntmAbout)
-					JOptionPane.showMessageDialog(frame, "Version 0.3\nAuthor: Guillermo Rebling", "About",
+					JOptionPane.showMessageDialog(frame, "Version 1.0\nAuthor: Guillermo Rebling\nEmail: memorebling@gmail.com", "About",
 							JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
@@ -140,6 +161,7 @@ public class checkWeather {
 				                line = reader.readLine();
 				            }
 				            apiKey = sb.toString();
+				            reader.close();
 				        } 
 				        catch (FileNotFoundException e1) {
 				            e1.printStackTrace();
@@ -147,7 +169,6 @@ public class checkWeather {
 				        catch (IOException e1) {
 				            e1.printStackTrace();
 				        }
-						//System.out.println(selectedFile.getAbsolutePath());
 					}
 				}
 			}
@@ -370,8 +391,6 @@ public class checkWeather {
 						Gson gson = new GsonBuilder().create();
 
 						CurrentReading[] weatherCurrentData = gson.fromJson(response.toString(), CurrentReading[].class);
-						
-						System.out.println(weatherCurrentData[0].toString());
 						
 						//Current conditions
 						dataCurrent[0][1] = weatherCurrentData[0].WeatherText;						//Wether headline
